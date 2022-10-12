@@ -111,7 +111,39 @@ class CrosswordCreator():
 
     def revise(self, x, y):
         
-        raise NotImplementedError
+        #The purpose of this function is to make variable `x` arc consistent with variable `y` by removing values from 
+        #the domain of x for which there is no  possible corresponding value for y in the domain of why.
+        
+        #Intitlizing variable with False value and if any change happened it becomes True and then return it
+        revised = False
+        
+        #Since the overlap is represented by tuple (a,b) and a is the square that the letter in x variable must be the same as b in y
+        #variable
+        x_square = self.crossword.overlaps[(x,y)][0]
+        y_square = self.crossword.overlaps[(x,y)][1]
+        
+        #copy_of_domains = self.domains.copy()
+
+        #Iterating over each word in the x domain and representing the the sqaure by a variable called letter, then comparing this letter
+        #with each letter in y variable in y sqaure and if once are the same, it is enough to keep that word, else we remove it
+        for word in self.domains[x].copy():
+            letter = word[x_square]
+            result = []
+            
+            for y_word in self.domains[y].copy():
+                if y_word[y_square] == letter:
+                    result.append(True)
+                else:
+                    result.append(False)
+            if all(result):
+                #If we once added True, it is enough to keep the word, so we continue
+                continue
+
+            else:
+                #if we didn't add any True, it means we have to remove the word
+                self.domains[x].remove(word)
+                revised = True
+        return revised
 
     def ac3(self, arcs=None):
         
