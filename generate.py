@@ -146,8 +146,44 @@ class CrosswordCreator():
         return revised
 
     def ac3(self, arcs=None):
+        #The purpose of this function is to update domain of each variable such that each variable is arc consistent with others
         
-        raise NotImplementedError
+        #If the arcs is none, then we start with a list of all variables that overlaps in our problem
+        if arcs == None:
+            
+            #Initlize an empty list of arcs if given as None
+            arcs = []
+            
+            #Iterate over all variables that have an overlap and append them to our list
+            for key, value in self.crossword.overlaps.items():
+                if value is None:
+                    continue
+                else:
+                    arcs.append(key)
+                    
+        #start to iterate, and as long as the arcs list NOT empty, we continoue
+        while len(arcs) != 0:
+            
+            #We start with the first two variables in our list
+            x,y = arcs.pop(0)
+            
+            #Then we check if revision happend, if yes then we go to the next step
+            if self.revise(x,y):
+                
+                #If the domain of the variable X became empty, then we return False, becuase in such a case no solution will be avaiable
+                if self.domains[x] is None:
+                    return False
+                
+                #Else, we iterate over each neighbor of x, and we add the pair of variables to our list that we want to make consistency,
+                #if we reached the same other variable, we don't add it
+                for var in self.crossword.neighbors(x):
+                    if var == y:
+                        continue
+                    else:
+                        arcs.append((var,x))
+        
+        #If everything went fine, we return True, it means that our ac3 algorithm, worked fine
+        return True
 
     def assignment_complete(self, assignment):
         
