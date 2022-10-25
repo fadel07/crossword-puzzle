@@ -187,7 +187,17 @@ class CrosswordCreator():
 
     def assignment_complete(self, assignment):
         
-        raise NotImplementedError
+        #The purpose of this function to check if assignment done for all variables
+        
+        #Iterate over all variables in our problem
+        for variable in self.domains:
+            
+            #check that every variable is in the assignment dict, if one variable not there, return False
+            if variable not in assignment:
+                return False
+        
+        #If everything went fine, return True    
+        return True
 
     def consistent(self, assignment):
         
