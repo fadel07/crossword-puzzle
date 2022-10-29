@@ -212,18 +212,18 @@ class CrosswordCreator():
         for key, value in assignment.items():
             
         #if the value is in the used_words list, return False, else
-        #continue and append that word to the used_words list'
+        #continue and append that word to the used_words list
             if value in used_words:
                 return False
             
             used_words.append(value)
 
-            #check if the length of the word as same as the variable length
+            #check if the length of the word is the same as the variable length
             if key.length != len(value):
                 return False
             
-            #get all the neighbors of that variable (becuase neighbors are the possible variable that has conflict), the check if the
-            # neighbor is in the assignment dict, then get the overlaping index of the two variables (if any) and then compare the value 
+            #get all the neighbors of that variable (becuase neighbors are the possible variable that has conflict), then check if the
+            #neighbor is in the assignment dict, then get the overlaping index of the two variables (if any) and then compare the value 
             #of that variable with the value of that neighbor at that index, if the same, return False
             neighbors = self.crossword.neighbors(key)
             
