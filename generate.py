@@ -201,8 +201,41 @@ class CrosswordCreator():
 
     def consistent(self, assignment):
         
+        #The purpose of this function is to check 3 things:
+        #1- That each word was assigned to a variable is unique
+        #2- That each word was assigned to a variable has a length same as the variable was assigned to
+        #3- That there is no conflict in the overlaping charecters 
         
-        raise NotImplementedError
+        used_words = []
+        
+        #Iterate over each variable and word in the assignment dict
+        for key, value in assignment.items():
+            
+        #if the value is in the used_words list, return False, else
+        #continue and append that word to the used_words list'
+            if value in used_words:
+                return False
+            
+            used_words.append(value)
+
+            #check if the length of the word as same as the variable length
+            if key.length != len(value):
+                return False
+            
+            #get all the neighbors of that variable (becuase neighbors are the possible variable that has conflict), the check if the
+            # neighbor is in the assignment dict, then get the overlaping index of the two variables (if any) and then compare the value 
+            #of that variable with the value of that neighbor at that index, if the same, return False
+            neighbors = self.crossword.neighbors(key)
+            
+            #iterate over each neighbor
+            for neighbor in neighbors:
+                
+                if neighbor in assignment:
+                    other_value = assignment[neighbor]
+                    if self.crossword.overlaps[key,neighbor]:
+                        i, j = self.crossword.overlaps[key,neighbor]
+                        if value[i] != other_value[j]:
+                            return False
 
     def order_domain_values(self, var, assignment):
         
