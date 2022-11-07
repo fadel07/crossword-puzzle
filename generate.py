@@ -6,9 +6,8 @@ from crossword import *
 class CrosswordCreator():
 
     def __init__(self, crossword):
-        """
-        Create new CSP crossword generate.
-        """
+        
+        #initiating the creater class by the helper class 'crossword', and then defining the dmoains
         self.crossword = crossword
         self.domains = {
             var: self.crossword.words.copy()
@@ -16,9 +15,9 @@ class CrosswordCreator():
         }
 
     def letter_grid(self, assignment):
-        """
-        Return 2D array representing a given assignment.
-        """
+        
+        #Function that return 2D array representing a given assignment.
+        
         letters = [
             [None for _ in range(self.crossword.width)]
             for _ in range(self.crossword.height)
@@ -32,9 +31,9 @@ class CrosswordCreator():
         return letters
 
     def print(self, assignment):
-        """
-        Print crossword assignment to the terminal.
-        """
+        
+        #The purpose of this function is to print crossword assignment to the terminal.
+        
         letters = self.letter_grid(assignment)
         for i in range(self.crossword.height):
             for j in range(self.crossword.width):
@@ -44,51 +43,11 @@ class CrosswordCreator():
                     print("█", end="")
             print()
 
-    def save(self, assignment, filename):
-        """
-        Save crossword assignment to an image file.
-        """
-        from PIL import Image, ImageDraw, ImageFont
-        cell_size = 100
-        cell_border = 2
-        interior_size = cell_size - 2 * cell_border
-        letters = self.letter_grid(assignment)
-
-        # Create a blank canvas
-        img = Image.new(
-            "RGBA",
-            (self.crossword.width * cell_size,
-             self.crossword.height * cell_size),
-            "black"
-        )
-        font = ImageFont.truetype("assets/fonts/OpenSans-Regular.ttf", 80)
-        draw = ImageDraw.Draw(img)
-
-        for i in range(self.crossword.height):
-            for j in range(self.crossword.width):
-
-                rect = [
-                    (j * cell_size + cell_border,
-                     i * cell_size + cell_border),
-                    ((j + 1) * cell_size - cell_border,
-                     (i + 1) * cell_size - cell_border)
-                ]
-                if self.crossword.structure[i][j]:
-                    draw.rectangle(rect, fill="white")
-                    if letters[i][j]:
-                        w, h = draw.textsize(letters[i][j], font=font)
-                        draw.text(
-                            (rect[0][0] + ((interior_size - w) / 2),
-                             rect[0][1] + ((interior_size - h) / 2) - 10),
-                            letters[i][j], fill="black", font=font
-                        )
-
-        img.save(filename)
+    
 
     def solve(self):
-        """
-        Enforce node and arc consistency, and then solve the CSP.
-        """
+        #solving the probelm by enforcing node consistency then using ac3 algorithm, then using the bactrack technique
+        
         self.enforce_node_consistency()
         self.ac3()
         return self.backtrack(dict())
@@ -135,7 +94,7 @@ class CrosswordCreator():
                     result.append(True)
                 else:
                     result.append(False)
-            if all(result):
+            if any(result):
                 #If we once added True, it is enough to keep the word, so we continue
                 continue
 
@@ -239,7 +198,43 @@ class CrosswordCreator():
 
     def order_domain_values(self, var, assignment):
         
-        raise NotImplementedError
+        Return a list of values in the domain of `var`, in order by
+        the number of values they rule out for neighboring variables.
+        The first value in the list, for example, should be the one
+        that rules out the fewest values among the neighbors of `var
+        
+        #The purpose of this function, is to return the values for a variables in list but sorted by the number of value sthey rule out for
+        #the other overlaping variables, by that, the first value in the list, should be the one that rules out the fewest values among
+        #other neighbors
+        
+        #Initiating an empty dict, with each value in that var domain, with value 0
+        values_counter = {}
+        
+        for value in self.domains[var]:
+            values_counter[value] = 0
+            
+            
+        #Iterating over all the values in that variable domain
+        for value in self.domains[var]:
+            
+            #then, iterating over each variable that is considered a neighbor of that variable
+            for variable in self.crossword.neighbors(var):
+                
+                #after that, we iterate over each value in each neighbor variable
+                for other_value in self.domains[variable]:
+                    
+                    #if there is and overlap between these two variables (the main variable and the neighbor var), we check there is a
+                    #conflict and the value (our main value) is effected by that neighbor value, we increase that value counter by one
+                    if self.crossword.overlaps[(var, variable)]:
+                        
+                        i,j = self.crossword.overlaps[var,variable]
+                        
+                        if value[i] != other_value[j
+                                                   
+                            values_counter[value] +=1
+                         
+        #after finishing our main loop, we returnt sorted list for that variable values, using the values counter as key
+        return sorted([value for value in values_counter], key=lambda value: values_counter[value])
 
     def select_unassigned_variable(self, assignment):
         
@@ -252,14 +247,12 @@ class CrosswordCreator():
 
 def main():
 
-    # Check usage
-    if len(sys.argv) not in [3, 4]:
-        sys.exit("Usage: python generate.py structure words [output]")
+    
 
     # Parse command-line arguments
     structure = sys.argv[1]
     words = sys.argv[2]
-    output = sys.argv[3] if len(sys.argv) == 4 else None
+    
 
     # Generate crossword
     crossword = Crossword(structure, words)
@@ -271,8 +264,7 @@ def main():
         print("No solution.")
     else:
         creator.print(assignment)
-        if output:
-            creator.save(assignment, output)
+        
 
 
 if __name__ == "__main__":
