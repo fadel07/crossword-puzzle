@@ -198,10 +198,7 @@ class CrosswordCreator():
 
     def order_domain_values(self, var, assignment):
         
-        Return a list of values in the domain of `var`, in order by
-        the number of values they rule out for neighboring variables.
-        The first value in the list, for example, should be the one
-        that rules out the fewest values among the neighbors of `var
+        
         
         #The purpose of this function, is to return the values for a variables in list but sorted by the number of value sthey rule out for
         #the other overlaping variables, by that, the first value in the list, should be the one that rules out the fewest values among
@@ -229,16 +226,64 @@ class CrosswordCreator():
                         
                         i,j = self.crossword.overlaps[var,variable]
                         
-                        if value[i] != other_value[j
+                        if value[i] != other_value[j]:
                                                    
                             values_counter[value] +=1
                          
         #after finishing our main loop, we returnt sorted list for that variable values, using the values counter as key
         return sorted([value for value in values_counter], key=lambda value: values_counter[value])
 
-    def select_unassigned_variable(self, assignment):
+    def select_unassigned_variable(self, assignment, start_value):
         
-        raise NotImplementedError
+        #The purpose of this function is choose a variable that is NOT choosen yet in our assignment, the variable should be the one
+        #with the fewest words remaining in its values, if a tie exist, the variabel choosen must be the one with highest number of 
+        #neigbors, if tie exist return any variable from the tied variabels
+        
+        #Initiating an empty list that will contain our result(s)
+        result = []
+        
+        #Initiating an empty dict that will contain our prospect variabels
+        prospect_variables = {}
+        
+        #Iterating over each variable in the domain of our problem, if the variable exists in our assignment, we ingore it, if doesn't
+        #we append it to our prospet variabels dict
+        for variable,value in self.domains.items():
+            
+            if variable in assignment:
+                continue
+            else:
+                prospect_variables[variable] = value
+                
+        #Iterating over each variable in our prospect dict, and starting with a value equals = 1 (because 1 is the fewest number of words), 
+        #if the len of that variable value (the same as the number of remaining words) is equal to our starting value, we append it to the 
+        #list result(s)
+        for key, value in prospect_variables.items():
+            if len(value) == start_value:
+                result.append(key)
+        
+        #if after that the len of that list is 0, it means no variable met our value, so we recrusivly call the function again but we will 
+        #increase the number of words to 2
+        if len(result) == 0:
+            return self.select_unassigned_variable(assignment,(start_value+1))
+        
+        #if result(s) contains value:
+        else:
+            
+            #if there is more that one value, it means a tie, so we move to the next standard wich is the number of neighbors
+            if len(result) > 1:
+                neighbors_counter = {}
+                
+                #iterating over each variable in our list, and puting the number of neighbors to that variabels in a dict
+                for var in result:
+                    neighbors_counter[var] = len(self.crossword.neighbors(var))
+                
+                #return the one with the max number of neighbors
+                return max(neighbors_counter, key=neighbors_counter.get)
+            
+            #if the len of result is not bigger than one, then returning the only variable 
+            else:
+
+                return result[0]
 
     def backtrack(self, assignment):
         
