@@ -245,7 +245,7 @@ class CrosswordCreator():
         #Initiating an empty dict that will contain our prospect variabels
         prospect_variables = {}
         
-        #Iterating over each variable in the domain of our problem, if the variable exists in our assignment, we ingore it, if doesn't
+        #Iterating over each variable in the domain of our problem, if the variable exists in our assignment, we ignore it, if doesn't
         #we append it to our prospet variabels dict
         for variable,value in self.domains.items():
             
@@ -269,7 +269,7 @@ class CrosswordCreator():
         #if result(s) contains value:
         else:
             
-            #if there is more that one value, it means a tie, so we move to the next standard wich is the number of neighbors
+            #if there is more than one value, it means a tie, so we move to the next standard wich is the number of neighbors
             if len(result) > 1:
                 neighbors_counter = {}
                 
@@ -282,12 +282,44 @@ class CrosswordCreator():
             
             #if the len of result is not bigger than one, then returning the only variable 
             else:
-
                 return result[0]
 
     def backtrack(self, assignment):
         
-        raise NotImplementedError
+        #The purpose of this function is take partial assignment as using backtrack search return full assignment if possible,
+        #if no possible assignment, return None
+        
+        #firstly, we check if the assignment given is complete, if so, we return it
+        if self.assignment_complete(assignment):
+            return assignment
+        
+        #we choose an assigned variable to work with using the function 'select_unassigned_variable'
+        var = self.select_unassigned_variable(assignment)
+        
+        #then we iterate over the values (words) of that variable, and we assign one of these values to the assignment
+        for value in self.order_domain_values(var, assignment):
+            assignment[var] = value
+            
+            #we check if that assignmet is consistent using the function 'consistent'
+            if self.consistent(assignment):
+                
+                #if the assigning is consistent, we generate the arcs that consist of that variable and all its neighbors and  
+                #force arc consistency using ac3 algorithm
+                arcs = [(var, neighbor_variable) for neighbor_variable in self.crossword.neighbors(var)]
+                self.ac3(arcs)
+                
+                #then we call recrusivly the backtrack function on the new assignment
+                result = self.backtrack(assignment)
+                
+                #we check if that call does return True, if so, it means that the assignment is complete, so we return it
+                if result:
+                    return result
+            
+            #we remove that variable after we worked with it
+            assignment.pop(var)
+        
+        #if no assignment is possible, return None, it means no solution for this puzzle
+        return None
 
 
 def main():
