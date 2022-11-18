@@ -43,7 +43,47 @@ class CrosswordCreator():
                     print("█", end="")
             print()
 
-    
+    def create_image(self, assignment, filename):
+        
+        #The purpose of this function is to create image from the puzzle we solved
+        
+        from PIL import Image, ImageDraw, ImageFont
+        cell_size = 100
+        cell_border = 2
+        interior_size = cell_size - 2 * cell_border
+        letters = self.letter_grid(assignment)
+
+        # Create a blank canvas
+        img = Image.new(
+            "RGBA",
+            (self.crossword.width * cell_size,
+             self.crossword.height * cell_size),
+            "black"
+        )
+        font = ImageFont.truetype("assets/fonts/OpenSans-Regular.ttf", 80)
+        draw = ImageDraw.Draw(img)
+
+        for i in range(self.crossword.height):
+            for j in range(self.crossword.width):
+
+                rect = [
+                    (j * cell_size + cell_border,
+                     i * cell_size + cell_border),
+                    ((j + 1) * cell_size - cell_border,
+                     (i + 1) * cell_size - cell_border)
+                ]
+                if self.crossword.structure[i][j]:
+                    draw.rectangle(rect, fill="white")
+                    if letters[i][j]:
+                        w, h = draw.textsize(letters[i][j], font=font)
+                        draw.text(
+                            (rect[0][0] + ((interior_size - w) / 2),
+                             rect[0][1] + ((interior_size - h) / 2) - 10),
+                            letters[i][j], fill="black", font=font
+                        )
+
+        img.save(filename)
+
 
     def solve(self):
         #solving the probelm by enforcing node consistency then using ac3 algorithm, then using the bactrack technique
@@ -195,6 +235,8 @@ class CrosswordCreator():
                         i, j = self.crossword.overlaps[key,neighbor]
                         if value[i] != other_value[j]:
                             return False
+        return True                
+                        
 
     def order_domain_values(self, var, assignment):
         
@@ -233,7 +275,7 @@ class CrosswordCreator():
         #after finishing our main loop, we returnt sorted list for that variable values, using the values counter as key
         return sorted([value for value in values_counter], key=lambda value: values_counter[value])
 
-    def select_unassigned_variable(self, assignment, start_value):
+    def select_unassigned_variable(self, assignment, start_value = 1):
         
         #The purpose of this function is choose a variable that is NOT choosen yet in our assignment, the variable should be the one
         #with the fewest words remaining in its values, if a tie exist, the variabel choosen must be the one with highest number of 
