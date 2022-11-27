@@ -33,7 +33,7 @@ class FinalWindow(QWidget):
             photo_label.setScaledContents(True)
             self.resize(pixmap.width(), pixmap.height())
             
-            thelabel = QLabel('No Solution, please try different words or structre')
+            thelabel = QLabel('No Solution, Please Try Different Words or Structre')
             font = thelabel.font()
             font.setPointSize(10)
             thelabel.setFont(font)
@@ -48,7 +48,7 @@ class FinalWindow(QWidget):
             photo_label.setScaledContents(True)
             self.resize(pixmap.width(), pixmap.height())
             
-            thelabel = QLabel('successfully generated')
+            thelabel = QLabel('Successfully generated')
             font = thelabel.font()
             font.setPointSize(10)
             thelabel.setFont(font)
@@ -71,7 +71,7 @@ class AnotherWindow(QWidget):
         
         layout = QVBoxLayout()
         instructions = QLabel("""Upload your strucutre, 
-and the words, then press on generate""")
+and the words, then press on Generate""")
         font = instructions.font()
         font.setPointSize(10)
         instructions.setFont(font)
@@ -79,7 +79,7 @@ and the words, then press on generate""")
         
         upload_st = QPushButton("upload structure")
         upload_words = QPushButton("upload words")
-        generate = QPushButton("generate")
+        generate = QPushButton("Generate")
         
         upload_st.clicked.connect(self.upload_structure)
         
