@@ -136,7 +136,7 @@ class MainWindow(QMainWindow):
         self.window1 = AnotherWindow()
         
 
-        self.setWindowTitle("Fadel's CNN program")
+        self.setWindowTitle("Fadel's Crossword Creater")
         self.setFixedWidth(500)
         self.setFixedHeight(500)
         

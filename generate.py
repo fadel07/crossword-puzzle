@@ -345,10 +345,6 @@ class CrosswordCreator():
             #we check if that assignmet is consistent using the function 'consistent'
             if self.consistent(assignment):
                 
-                #if the assigning is consistent, we generate the arcs that consist of that variable and all its neighbors and  
-                #force arc consistency using ac3 algorithm
-                arcs = [(var, neighbor_variable) for neighbor_variable in self.crossword.neighbors(var)]
-                self.ac3(arcs)
                 
                 #then we call recrusivly the backtrack function on the new assignment
                 result = self.backtrack(assignment)
